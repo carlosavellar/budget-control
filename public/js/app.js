@@ -1,6 +1,7 @@
 
 
-const budgetController = (() => {
+const budgetController = (() =>{
+
 
 
 })();
@@ -31,6 +32,12 @@ const uiController = (()=>{
             },
             globlaStrings:()=>{
                 return domstrings;
+            },
+            clearFields:(desc, value)=>{
+                let item = document.querySelectorAll(desc + "," + value);
+                item.forEach(curr=>{
+                    curr.value = '';
+                });
             }
         };
     }
@@ -41,8 +48,11 @@ const controller = ((budgetCtrl, uiCtrl)=>{
     input = uiCtrl.inputVals();
 
     const controlAddItems = ()=>{
-        console.log(`${Dom} Sao esses`);
-        // console.log('Teste');
+        console.log(`${input} Sao esses`);
+
+        // Clear Fields
+        uiCtrl.clearFields(Dom.desc, Dom.value);
+
     };
 
     const eventListenners = ()=>{
@@ -62,21 +72,3 @@ const controller = ((budgetCtrl, uiCtrl)=>{
 )(budgetController, uiController);
 controller.init();
 
-
-
-
-
-// let domstrings = {
-//     type: ".add__type",
-//     desc: ".add__description",
-//     valour: ".add__value",
-//     btn: ".add__btn",
-//     incList: ".income__list",
-//     expList: ".expenses__list",
-//     container: ".container",
-//     budget: ".budget__value",
-//     income_lable: ".budget__income--value",
-//     expense_lable: ".budget__expenses--value",
-//     month: ".budget__title--month",
-//     percentage: ".budget__expenses--percentage"
-// };
