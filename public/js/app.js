@@ -38,6 +38,7 @@ const uiController = (()=>{
                 item.forEach(curr=>{
                     curr.value = '';
                 });
+                
             }
         };
     }
@@ -47,14 +48,7 @@ const controller = ((budgetCtrl, uiCtrl)=>{
     Dom = uiCtrl.globlaStrings();
     input = uiCtrl.inputVals();
 
-    const controlAddItems = ()=>{
-        console.log(`${input} Sao esses`);
-
-        // Clear Fields
-        uiCtrl.clearFields(Dom.desc, Dom.value);
-
-    };
-
+    
     const eventListenners = ()=>{
         document.querySelector(Dom.btn).addEventListener('click', controlAddItems);
         document.addEventListener('keypress', evt=>{
@@ -62,6 +56,18 @@ const controller = ((budgetCtrl, uiCtrl)=>{
                 controlAddItems();
             }
         });
+    };
+    const controlAddItems = ()=>{
+        if(input.getDesc !== ' ' && !isNaN(input.getValue) || input.getValue > 0){
+           
+            // Clear Fields
+            uiCtrl.clearFields(Dom.desc, Dom.value);
+            console.log("SIM NESSA PORRA");
+
+        }else{
+            console.log('Nada nesse caralho');
+        }
+
     };
     return{
         init:()=>{
