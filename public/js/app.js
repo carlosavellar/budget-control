@@ -21,7 +21,7 @@ const budgetController = (()=>{
         this.percentage = percentage;
     }; 
     class Income {
-        constructor(id, description, valour) {
+        constructor (id, description, valour) {
             this.id = id;
             this.description = description;
             this.valour = valour;
@@ -73,7 +73,7 @@ const budgetController = (()=>{
             index = item.indexOf(id);
             if (index !== -1){
                 data.allitems[type].splice(index, 1);
-            }
+           }
 
             
         },
@@ -205,6 +205,7 @@ const controller = ((budgetCtrl, uiCtrl)=>{
         }
     };
 
+    // TODO: Terminar essa porra
 
     const controlAddItem = ()=>{
         let input, newItem, budget;
