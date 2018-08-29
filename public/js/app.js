@@ -44,7 +44,10 @@ const budgetController = (() =>{
         },
         testings:()=>{
 
-
+            let item = data.allItems;
+            for(var sex in item){
+                console.log(sex);
+            }
         }
     };
 })();
