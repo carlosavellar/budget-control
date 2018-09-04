@@ -18,7 +18,7 @@ const budgetController = (() =>{
     }
     let data={
         allItems:{
-            inc: ['2'],
+            inc: [],
             exp: []
         },
         totais:{
@@ -43,14 +43,11 @@ const budgetController = (() =>{
             return newitem;
         },
         testings:()=>{
-            let item = data.allItems;
-            for (var sex in item) {
-                console.log(sex);
-            }
+            console.log(data);
         }
     };
 })();
-budgetController.testings();
+
 
 const uiController = (()=>{
         let domstrings = {
@@ -84,15 +81,28 @@ const uiController = (()=>{
                     curr.value = '';
                 });
                 
+            },
+            addItem: (obj, type)=>{
+                let html, newHtml, element;
+                if(type === 'inc'){
+                    element = domstrings.incList;
+                    html = '<div class="item clearfix" id="inc-%id%"> <div class="item__description"> %desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
+                }else if(type === 'exp'){
+                    element = domstrings.expList;
+                    html = '<div class="item clearfix" id="expense-%id%"> <div class="item__description"> %desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
+                }
+                newHtml = html.replace("%id%", obj.id);
+                newHtml = newHtml.replace("%desc%", obj.description);
+                newHtml = newHtml.replace("%val%", obj.value);
+                document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+
             }
+
         };
     }
 )();
 const controller = ((budgetCtrl, uiCtrl)=>{
-    let Dom, input;
-    Dom = uiCtrl.globlaStrings();
-    input = uiCtrl.inputVals();
-
+    let Dom = uiCtrl.globlaStrings();
     
     const eventListenners = ()=>{
         document.querySelector(Dom.btn).addEventListener('click', controlAddItems);
@@ -103,13 +113,17 @@ const controller = ((budgetCtrl, uiCtrl)=>{
         });
     };
     const controlAddItems = ()=>{
+        let input, newItem;
+        input = uiCtrl.inputVals();
         if(input.getDesc !== ' ' && !isNaN(input.getValue) || input.getValue > 0){
-           
-            budgetCtrl.addItem(input.getType, input.getDesc, input.getValue);
+            newItem = budgetCtrl.addItem(input.getType, input.getDesc, input.getValue);
 
+            uiCtrl.addItem(newItem, input.getType);
             // Clear Fields
             uiCtrl.clearFields(Dom.desc, Dom.value);
             console.log("SIM NESSA PORRA");
+
+
 
         }else{
             console.log('Nada nesse caralho');
