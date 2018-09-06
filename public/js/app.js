@@ -131,7 +131,8 @@ const uiController = (()=>{
             income_lable: ".budget__income--value",
             expense_lable: ".budget__expenses--value",
             month: ".budget__title--month",
-            percentage: ".budget__expenses--percentage"
+            percentage: ".budget__expenses--percentage",
+
         };
         const formatingNumbers = (num, type)=>{
             var int, dec, splitNum, type;
@@ -139,12 +140,14 @@ const uiController = (()=>{
             num = num.toFixed(2);
             splitNum = num.split('.');
             int = splitNum[0];
+            dec = splitNum[1];
+            console.log(int.substr(0, int.length - 3));
             if(int.length > 3){
                 int = int.substr(0, int.length - 3) + '.'  +  int.substr(int.length -3, 3); 
-            }
+            } 
+           return (type === 'inc' ? '+' : '-') + ' ' + int + ',' + dec; 
             
-            dec = splitNum[1];
-            return (type === 'inc' ? '+' : '-') + ' ' + int + ',' + dec; 
+            
         };
         return{
             inputVals: ()=>{
@@ -182,7 +185,7 @@ const uiController = (()=>{
                 let type;
                 obj.budget > 0 ? '+' : '-';
                 document.querySelector(domstrings.budget).textContent = formatingNumbers(obj.budget, type);
-                document.querySelector(domstrings.income_lable).textContent = formatingNumbers(obj.labelInc, '-');
+                document.querySelector(domstrings.income_lable).textContent = formatingNumbers(obj.labelInc, '+');
                 document.querySelector(domstrings.expense_lable).textContent = formatingNumbers(obj.labelExp, "-");
                 document.querySelector(domstrings.percentage).textContent = obj.percentage;
             },
@@ -190,6 +193,14 @@ const uiController = (()=>{
                 let el = document.getElementById(item);
                 el.parentNode.removeChild(el);
             },
+            formatingDate:()=>{
+                let now, day, month, months;
+                now = new Date();
+                day  =  now.getDay();
+                month = now.getMonth();
+                months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                document.querySelector(domstrings.month).textContent = `${day} ${months[month]}`;
+            }
             
         };
     }
@@ -259,6 +270,7 @@ const controller = ((budgetCtrl, uiCtrl)=>{
               labelExp: 0,
               percentage: 0
             });
+            uiCtrl.formatingDate();
         }
     }
 }
