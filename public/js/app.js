@@ -133,18 +133,18 @@ const uiController = (()=>{
             month: ".budget__title--month",
             percentage: ".budget__expenses--percentage"
         };
-        const  formatDigits = (num, type) => {
-                let int, dec, splitnum;
-                num = Math.abs(num);
-                num = num.toFixed(2);
-                splitnum = num.split('.');
-                int = splitnum[0];
-                if (int.length > 3) {
-                    int = int.substr(int, int.length - 3) + "," + int.substr(int.length  - 3, 3);
-                }
-                dec = splitnum[1];
-
-                return (type === "inc" ? "+" : "-") +  '  ' + int + ',' + dec;
+        const formatingNumbers = (num, type)=>{
+            var int, dec, splitNum, type;
+            num = Math.abs(num);
+            num = num.toFixed(2);
+            splitNum = num.split('.');
+            int = splitNum[0];
+            if(int.length > 3){
+                int = int.substr(0, int.length - 3) + '.'  +  int.substr(int.length -3, 3); 
+            }
+            
+            dec = splitNum[1];
+            return (type === 'inc' ? '+' : '-') + ' ' + int + ',' + dec; 
         };
         return{
             inputVals: ()=>{
@@ -175,13 +175,15 @@ const uiController = (()=>{
                 }
                 newHtml = html.replace("%id%", obj.id);
                 newHtml = newHtml.replace("%desc%", obj.description);
-                newHtml = newHtml.replace("%val%", formatDigits(obj.value, type));
+                newHtml = newHtml.replace("%val%", formatingNumbers(obj.value, type));
                 document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
             },
             displayBudget: (obj)=>{
-                document.querySelector(domstrings.budget).textContent = obj.budget;
-                document.querySelector(domstrings.income_lable).textContent = obj.labelInc;
-                document.querySelector(domstrings.expense_lable).textContent = obj.labelExp;
+                let type;
+                obj.budget > 0 ? '+' : '-';
+                document.querySelector(domstrings.budget).textContent = formatingNumbers(obj.budget, type);
+                document.querySelector(domstrings.income_lable).textContent = formatingNumbers(obj.labelInc, '-');
+                document.querySelector(domstrings.expense_lable).textContent = formatingNumbers(obj.labelExp, "-");
                 document.querySelector(domstrings.percentage).textContent = obj.percentage;
             },
             deleteItem: (item)=>{
