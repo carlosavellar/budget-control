@@ -2,20 +2,20 @@ const budgetController = (() => {
     console.log('Budget');
 
     class Expense {
-        constructor(id, description, value){
+        constructor(id, description, value) {
             this.id = id;
             this.description = description;
             this.value = value;
         }
     }
     class Income {
-        constructor(id, description, value){
+        constructor(id, description, value) {
             this.id = id;
             this.description = description;
             this.value = value;
         }
     }
-    let data={
+    let data = {
         allItems: {
             inc: [],
             exp: []
@@ -24,26 +24,50 @@ const budgetController = (() => {
             inc: 0,
             exp: 0
         },
+        budget: 0,
+        percentage: -1
+    };
+
+    const calcTotals = (type) => {
+        let sum = 0;
+        data.allItems[type].forEach(curr => sum += curr.value);
+   
+        data.totals[type] = sum;
+  
+        return sum;
     };
 
     return {
-        addItem: (type, description, value)=>{
+        addItem: (type, description, value) => {
             let ID, newItem;
-            if(data.allItems[type].length > 0){
-                ID = data.allItems[type][data.allItems[type].length  - 1].id + 1;
-            }else{
+            if (data.allItems[type].length > 0) {
+                ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+            } else {
                 ID = 0;
             }
-            if(type === 'inc'){
+            if (type === 'inc') {
                 newItem = new Income(ID, description, value);
-            }else if(type === 'exp'){
+            } else if (type === 'exp') {
                 newItem = new Income(ID, description, value);
             }
             data.allItems[type].push(newItem);
             return newItem;
         },
-        testings: ()=>{
-           return data;
+        testings: () => {
+            return data;
+        },
+        calculateBudget: () => {
+            //  calc Totlas
+            calcTotals('inc');
+            calcTotals('exp');
+            // calc budget
+            data.budget = data.totals.inc - data.totals.exp;
+            console.log(data.totals.inc);
+            // Calc percentage 
+            if (data.totals.inc > 0) {
+                data.percentage = (data.totals.exp / data.totals.inc) * 100;
+            }
+            data.percentage = -1;
         }
     };
 
@@ -66,23 +90,23 @@ const uiController = (() => {
     };
     return {
         inputVals: () => {
-            return{
-                getType:  document.querySelector(domstrings.type).value,
-                getDesc:  document.querySelector(domstrings.desc).value,
-                getValue:  document.querySelector(domstrings.value).value
+            return {
+                getType: document.querySelector(domstrings.type).value,
+                getDesc: document.querySelector(domstrings.desc).value,
+                getValue: parseInt(document.querySelector(domstrings.value).value)
             }
         },
-        globalInput: ()=>{
+        globalInput: () => {
             return domstrings;
         },
-        addItem: (type, obj)=>{
+        addItem: (type, obj) => {
             let html, newHtml, element;
-            if(type === 'inc'){
+            if (type === 'inc') {
                 element = domstrings.incList;
                 html = '<div class="item clearfix" id="inc-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
-            }else if(type === 'exp'){
+            } else if (type === 'exp') {
                 element = domstrings.expList;
-                html = '<div class="item clearfix" id="exp-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>'; 
+                html = '<div class="item clearfix" id="exp-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
             }
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%desc%', obj.description);
@@ -93,17 +117,23 @@ const uiController = (() => {
 })();
 const controller = ((budgetCtrl, uiCtrl) => {
     let Dom = uiCtrl.globalInput();
-    const controlAddItem = ()=>{
+
+    const updateBudget = () => {
+        budgetCtrl.calculateBudget();
+    };
+    const controlAddItem = () => {
         let input, newItem;
         input = uiCtrl.inputVals();
-        newItem = budgetCtrl.addItem(input.getType,input.getDesc,input.getValue);
+        newItem = budgetCtrl.addItem(input.getType, input.getDesc, input.getValue);
 
         uiCtrl.addItem(input.getType, newItem);
+
+        updateBudget();
     };
-    const evtListeners = ()=>{
+    const evtListeners = () => {
         document.querySelector(Dom.btn).addEventListener('click', controlAddItem);
-        document.addEventListener("keypress", e=>{
-            if(e.keycode === 13 || e.which === 13){
+        document.addEventListener("keypress", e => {
+            if (e.keycode === 13 || e.which === 13) {
                 controlAddItem();
             }
         });
@@ -111,8 +141,8 @@ const controller = ((budgetCtrl, uiCtrl) => {
         budgetCtrl.testings();
     };
 
-    return{
-        init: ()=>{
+    return {
+        init: () => {
             evtListeners();
         }
     };
