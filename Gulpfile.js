@@ -8,6 +8,7 @@ const browserSync = require("browser-sync").create();
 const watch = require('gulp-watch');
 const DIST = "./public/dist";
 const HTML_SOURCE = "./public/**/*.html";
+const CSS_SOURCE = "./public/**/*.css";
 const SCRIPT_SOURCE = "./public/js/**/*.js";
 
 gulp.task("scripts", () => {
@@ -46,7 +47,7 @@ gulp.task("browser-sync", function() {
   });
 });
 gulp.task("watch", () => {
-  gulp.watch([SCRIPT_SOURCE, HTML_SOURCE], ["js-watch", "scripts"]);
+  gulp.watch([SCRIPT_SOURCE, HTML_SOURCE, CSS_SOURCE], ["js-watch", "scripts"]);
 });
 gulp.task("default", ["js-watch", "watch"], function() {
   // Serve files from the root of this project
