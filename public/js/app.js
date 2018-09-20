@@ -4,14 +4,14 @@ const budgetController = (() => {
     class Expense {
         constructor(id, description, value){
             this.id = id;
-            this.idescriptiond = description;
+            this.description = description;
             this.value = value;
         }
     }
     class Income {
         constructor(id, description, value){
             this.id = id;
-            this.idescriptiond = description;
+            this.description = description;
             this.value = value;
         }
     }
@@ -74,8 +74,22 @@ const uiController = (() => {
         },
         globalInput: ()=>{
             return domstrings;
+        },
+        addItem: (type, obj)=>{
+            let html, newHtml, element;
+            if(type === 'inc'){
+                element = domstrings.incList;
+                html = '<div class="item clearfix" id="inc-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
+            }else if(type === 'exp'){
+                element = domstrings.expList;
+                html = '<div class="item clearfix" id="exp-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>'; 
+            }
+            newHtml = html.replace('%id%', obj.id);
+            newHtml = newHtml.replace('%desc%', obj.description);
+            newHtml = newHtml.replace('%val%', obj.value);
+            document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         }
-    };
+    }
 })();
 const controller = ((budgetCtrl, uiCtrl) => {
     let Dom = uiCtrl.globalInput();
@@ -83,6 +97,8 @@ const controller = ((budgetCtrl, uiCtrl) => {
         let input, newItem;
         input = uiCtrl.inputVals();
         newItem = budgetCtrl.addItem(input.getType,input.getDesc,input.getValue);
+
+        uiCtrl.addItem(input.getType, newItem);
     };
     const evtListeners = ()=>{
         document.querySelector(Dom.btn).addEventListener('click', controlAddItem);
@@ -91,6 +107,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
                 controlAddItem();
             }
         });
+        debugger;
         budgetCtrl.testings();
     };
 
