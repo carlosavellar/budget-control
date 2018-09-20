@@ -27,8 +27,23 @@ const budgetController = (() => {
     };
 
     return {
-        addItem: (type, description)=>{
-
+        addItem: (type, description, value)=>{
+            let ID, newItem;
+            if(data.allItems[type].length > 0){
+                ID = data.allItems[type][data.allItems[type].length  - 1].id + 1;
+            }else{
+                ID = 0;
+            }
+            if(type === 'inc'){
+                newItem = new Income(ID, description, value);
+            }else if(type === 'exp'){
+                newItem = new Income(ID, description, value);
+            }
+            data.allItems[type].push(newItem);
+            return newItem;
+        },
+        testings: ()=>{
+           return data;
         }
     };
 
@@ -65,7 +80,9 @@ const uiController = (() => {
 const controller = ((budgetCtrl, uiCtrl) => {
     let Dom = uiCtrl.globalInput();
     const controlAddItem = ()=>{
-        console.log("Control add item");
+        let input, newItem;
+        input = uiCtrl.inputVals();
+        newItem = budgetCtrl.addItem(input.getType,input.getDesc,input.getValue);
     };
     const evtListeners = ()=>{
         document.querySelector(Dom.btn).addEventListener('click', controlAddItem);
@@ -74,6 +91,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
                 controlAddItem();
             }
         });
+        budgetCtrl.testings();
     };
 
     return{
