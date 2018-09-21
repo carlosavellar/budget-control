@@ -7,7 +7,18 @@ const budgetController = (() => {
             this.description = description;
             this.value = value;
         }
+        calculatePercentages (totalIncome){
+            if(totalIncome){
+                this.percentages = Math.round((this.value / totalIncome) * 100);
+            }else{
+                this.percentages = -1;
+            }
+        }
+        getPercentages (){
+            return this.percentages;
+        }
     }
+    
     class Income {
         constructor(id, description, value) {
             this.id = id;
@@ -65,9 +76,11 @@ const budgetController = (() => {
             console.log(data.totals.inc);
             // Calc percentage 
             if (data.totals.inc > 0) {
-                data.percentage = (data.totals.exp / data.totals.inc) * 100;
+                data.percentage = Math.round((data.totals.exp / data.totals.inc) * 100);
+            }else {
+
+                data.percentage = -1;
             }
-            data.percentage = -1;
         },
         getBudget: ()=>{
             return{
@@ -84,6 +97,14 @@ const budgetController = (() => {
             if(index !==  -1 ){
                 data.allItems[type].splice(index, 1);
             }
+        },
+        calculatePercentages: () =>{
+            data.allItems.exp.forEach(curr => curr.calculatePercentages(data.totals.inc));
+        },
+        returnPercenatehs: ()=>{
+            let perce = data.allItems.exp.forEach(curr=>curr.getPercentages());
+            console.log(`${perce}, isso aqui`);
+            return perce;
         }
     };
 
@@ -148,6 +169,10 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         uiCtrl.displayBudget(budget);
     };
+    const calculatePercenatages = ()=>{
+        budgetCtrl.calculatePercentages(); 
+        budgetCtrl.returnPercenatehs();
+    };
     const constrollDeleteItem = (e)=>{
         let item, splitedItem, type, ID;
         item = e.target.parentNode.parentNode.parentNode.parentNode.id;
@@ -161,8 +186,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
             updateBudget();
 
-          
-
+            calculatePercenatages();
         }
     };
     const controlAddItem = () => {
@@ -174,6 +198,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         updateBudget();
 
+        calculatePercenatages();
         
     };
     const evtListeners = () => {
