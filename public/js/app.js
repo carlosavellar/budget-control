@@ -31,9 +31,9 @@ const budgetController = (() => {
     const calcTotals = (type) => {
         let sum = 0;
         data.allItems[type].forEach(curr => sum += curr.value);
-   
+
         data.totals[type] = sum;
-  
+
         return sum;
     };
 
@@ -68,6 +68,22 @@ const budgetController = (() => {
                 data.percentage = (data.totals.exp / data.totals.inc) * 100;
             }
             data.percentage = -1;
+        },
+        getBudget: ()=>{
+            return{
+                 incLable: data.totals.inc,
+                 expLable: data.totals.exp,
+                 budget: data.budget,
+                 percentage: data.percentage
+            }
+        },
+        deleteItem: (type, ID)=>{
+            let item, index;
+            item = data.allItems[type].map(curr => curr.id);
+            index = item.indexOf(ID);
+            if(index !==  -1 ){
+                data.allItems[type].splice(index, 1);
+            }
         }
     };
 
@@ -112,14 +128,42 @@ const uiController = (() => {
             newHtml = newHtml.replace('%desc%', obj.description);
             newHtml = newHtml.replace('%val%', obj.value);
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
+        },
+        displayBudget: (obj)=>{
+            document.querySelector(domstrings.budget).textContent = obj.budget;
+            document.querySelector(domstrings.income_lable).textContent = obj.incLable;
+            document.querySelector(domstrings.expense_lable).textContent = obj.expLable;
+            document.querySelector(domstrings.percentage).textContent = obj.percentage;
         }
+        
     }
 })();
 const controller = ((budgetCtrl, uiCtrl) => {
     let Dom = uiCtrl.globalInput();
 
     const updateBudget = () => {
+        let budget;
         budgetCtrl.calculateBudget();
+        budget = budgetCtrl.getBudget();
+
+        uiCtrl.displayBudget(budget);
+    };
+    const constrollDeleteItem = (e)=>{
+        let item, splitedItem, type, ID;
+        item = e.target.parentNode.parentNode.parentNode.parentNode.id;
+        if(item){
+            
+            splitedItem = item.split('-');
+            type = splitedItem[0];
+            ID =  parseFloat(splitedItem[1]);
+
+            budgetCtrl.deleteItem(type, ID);
+
+            updateBudget();
+
+          
+
+        }
     };
     const controlAddItem = () => {
         let input, newItem;
@@ -129,6 +173,8 @@ const controller = ((budgetCtrl, uiCtrl) => {
         uiCtrl.addItem(input.getType, newItem);
 
         updateBudget();
+
+        
     };
     const evtListeners = () => {
         document.querySelector(Dom.btn).addEventListener('click', controlAddItem);
@@ -139,14 +185,23 @@ const controller = ((budgetCtrl, uiCtrl) => {
         });
         debugger;
         budgetCtrl.testings();
-    };
 
+        document.querySelector(Dom.container).addEventListener('click', constrollDeleteItem);
+    };
+   
     return {
         init: () => {
             evtListeners();
+            uiCtrl.displayBudget({
+                incLable: 0,
+                expLable: 0,
+                budget: 0,
+                percentage: 0
+            });
         }
     };
 
 
 })(budgetController, uiController);
 controller.init();
+
