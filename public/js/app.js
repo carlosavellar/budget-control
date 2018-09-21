@@ -8,7 +8,7 @@ const budgetController = (() => {
             this.value = value;
         }
         calculatePercentages (totalIncome){
-            if(totalIncome){
+            if(totalIncome > 0){
                 this.percentages = Math.round((this.value / totalIncome) * 100);
             }else{
                 this.percentages = -1;
@@ -59,7 +59,7 @@ const budgetController = (() => {
             if (type === 'inc') {
                 newItem = new Income(ID, description, value);
             } else if (type === 'exp') {
-                newItem = new Income(ID, description, value);
+                newItem = new Expense(ID, description, value);
             }
             data.allItems[type].push(newItem);
             return newItem;
@@ -107,8 +107,6 @@ const budgetController = (() => {
             return perce;
         }
     };
-
-
 })();
 const uiController = (() => {
     let domstrings = {
