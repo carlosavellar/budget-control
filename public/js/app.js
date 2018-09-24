@@ -101,9 +101,8 @@ const budgetController = (() => {
         calculatePercentages: () =>{
             data.allItems.exp.forEach(curr => curr.calculatePercentages(data.totals.inc));
         },
-        returnPercenatehs: ()=>{
-            let perce = data.allItems.exp.forEach(curr=>curr.getPercentages());
-            console.log(`${perce}, isso aqui`);
+        getPercentages: ()=>{
+            let perce = data.allItems.exp.map(curr=>curr.getPercentages());
             return perce;
         }
     };
@@ -121,7 +120,21 @@ const uiController = (() => {
         income_lable: ".budget__income--value",
         expense_lable: ".budget__expenses--value",
         month: ".budget__title--month",
-        percentage: ".budget__expenses--percentage"
+        percentage: ".budget__expenses--percentage",
+        item_perce: ".item__percentage"
+    };
+    const formarDigits = (num, type)=>{
+        let int, dec, splitNum;
+        num = Math.abs(num);
+        num = num.toFixed(2);
+        splitNum = num.split('.');
+        int = splitNum[0];
+        dec = splitNum[1];
+        if(int.length > 3){
+            int = int.substr(0, int.length - 3) + '.' + int.substr(int.length - 3, 3);
+        }
+        return (type === 'inc' ? '+' : '-') + ' ' + int + ',' + dec;
+        // num = num
     };
     return {
         inputVals: () => {
@@ -141,19 +154,23 @@ const uiController = (() => {
                 html = '<div class="item clearfix" id="inc-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
             } else if (type === 'exp') {
                 element = domstrings.expList;
-                html = '<div class="item clearfix" id="exp-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__percentage">21%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
+                html = '<div class="item clearfix" id="exp-%id%"> <div class="item__description">%desc%</div> <div class="right clearfix"> <div class="item__value">%val%</div> <div class="item__percentage">%iPerce%</div> <div class="item__delete"> <button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button> </div> </div> </div>';
             }
             newHtml = html.replace('%id%', obj.id);
             newHtml = newHtml.replace('%desc%', obj.description);
             newHtml = newHtml.replace('%val%', obj.value);
+            newHtml = newHtml.replace('%iPerce%', obj.percentages);
             document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
         },
         displayBudget: (obj)=>{
-            document.querySelector(domstrings.budget).textContent = obj.budget;
-            document.querySelector(domstrings.income_lable).textContent = obj.incLable;
-            document.querySelector(domstrings.expense_lable).textContent = obj.expLable;
+            let type;
+            obj.budget > 0 ? type = 'inc' : type = 'exp'; 
+            document.querySelector(domstrings.budget).textContent = formarDigits(obj.budget, type);
+            document.querySelector(domstrings.income_lable).textContent = formarDigits(obj.incLable, '+' );
+            document.querySelector(domstrings.expense_lable).textContent = formarDigits(obj.expLable, '-');
             document.querySelector(domstrings.percentage).textContent = obj.percentage;
-        }
+        },
+        
         
     }
 })();
@@ -167,9 +184,15 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         uiCtrl.displayBudget(budget);
     };
-    const calculatePercenatages = ()=>{
-        budgetCtrl.calculatePercentages(); 
-        budgetCtrl.returnPercenatehs();
+    const updatepercentages = ()=>{
+
+
+        // 1 . Calculate perce
+
+        // 2 . Ready budget Controller
+
+        // 3 . Update user inerface
+
     };
     const constrollDeleteItem = (e)=>{
         let item, splitedItem, type, ID;
@@ -184,7 +207,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
             updateBudget();
 
-            calculatePercenatages();
+        
         }
     };
     const controlAddItem = () => {
@@ -196,7 +219,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         updateBudget();
 
-        calculatePercenatages();
+        updatepercentages();
         
     };
     const evtListeners = () => {
@@ -223,8 +246,6 @@ const controller = ((budgetCtrl, uiCtrl) => {
             });
         }
     };
-
-
 })(budgetController, uiController);
 controller.init();
 
