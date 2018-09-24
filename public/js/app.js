@@ -1,5 +1,6 @@
 const budgetController = (() => {
-    console.log('Budget');
+    
+    console.log("Budget");
 
     class Expense {
         constructor(id, description, value) {
@@ -7,16 +8,17 @@ const budgetController = (() => {
             this.description = description;
             this.value = value;
         }
-        calculatePercentages (totalIncome){
-            if(totalIncome > 0){
-                this.percentages = Math.round((this.value / totalIncome) * 100);
+        calcPercentages (totalIncome){
+            if(totalIncome > 0) {
+                this.percentages = (this.value / totalIncome) * 100;
             }else{
                 this.percentages = -1;
             }
         }
-        getPercentages (){
+        getPercentages(){
             return this.percentages;
         }
+       
     }
     
     class Income {
@@ -98,13 +100,17 @@ const budgetController = (() => {
                 data.allItems[type].splice(index, 1);
             }
         },
-        calculatePercentages: () =>{
-            data.allItems.exp.forEach(curr => curr.calculatePercentages(data.totals.inc));
+        calculatePercentages: () => {
+          /* I will loop through the all expense value and use a method to calculate eath
+            expense 
+            expense  */
+            data.allItems['exp'].forEach(curr=>curr.calcPercentages(data.totals.inc));
         },
-        getPercentages: ()=>{
-            let perce = data.allItems.exp.map(curr=>curr.getPercentages());
-            return perce;
-        }
+        getPercentages: () => {
+            // here i will create a news array with exach news percentage 
+            let perc = data.allItems['exp'].map(curr=>curr.getPercentages());
+            return perc;
+        },
     };
 })();
 const uiController = (() => {
@@ -184,16 +190,20 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         uiCtrl.displayBudget(budget);
     };
-    const updatepercentages = ()=>{
 
+    const updatePercentages = () =>{
 
-        // 1 . Calculate perce
+        // 1. Calc percnetages
+        budgetCtrl.calculatePercentages();
 
-        // 2 . Ready budget Controller
+        // 2. Read percnetages
+        let perc = budgetCtrl.getPercentages();
+        // 3. Display at the UI
 
-        // 3 . Update user inerface
+        console.log(perc + ' e');
 
     };
+  
     const constrollDeleteItem = (e)=>{
         let item, splitedItem, type, ID;
         item = e.target.parentNode.parentNode.parentNode.parentNode.id;
@@ -204,9 +214,10 @@ const controller = ((budgetCtrl, uiCtrl) => {
             ID =  parseFloat(splitedItem[1]);
 
             budgetCtrl.deleteItem(type, ID);
+            // updatePercentages();
 
             updateBudget();
-
+            
         
         }
     };
@@ -219,8 +230,8 @@ const controller = ((budgetCtrl, uiCtrl) => {
 
         updateBudget();
 
-        updatepercentages();
-        
+        // updatepercentages();
+        updatePercentages();
     };
     const evtListeners = () => {
         document.querySelector(Dom.btn).addEventListener('click', controlAddItem);
