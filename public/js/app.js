@@ -10,7 +10,7 @@ const budgetController = (() => {
         }
         calcPercentages (totalIncome){
             if(totalIncome > 0) {
-                this.percentages = (this.value / totalIncome) * 100;
+                this.percentages = Math.round((this.value / totalIncome) * 100);
             }else{
                 this.percentages = -1;
             }
