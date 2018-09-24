@@ -235,14 +235,14 @@ const controller = ((budgetCtrl, uiCtrl) => {
     const controlAddItem = () => {
         let input, newItem;
         input = uiCtrl.inputVals();
-        newItem = budgetCtrl.addItem(input.getType, input.getDesc, input.getValue);
-
-        uiCtrl.addItem(input.getType, newItem);
-
-        updateBudget();
-
-        // updatepercentages();
-        updatePercentages();
+        if(input.getDesc !== '' && !isNaN(input.getValue)){
+            newItem = budgetCtrl.addItem(input.getType, input.getDesc, input.getValue);
+            uiCtrl.addItem(input.getType, newItem);
+            updateBudget();
+            updatePercentages();
+        }else {
+            alert(`Hey, this is not Ok`);
+        }
     };
     const evtListeners = () => {
         document.querySelector(Dom.btn).addEventListener('click', controlAddItem);
