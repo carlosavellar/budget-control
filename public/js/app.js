@@ -176,8 +176,18 @@ const uiController = (() => {
             document.querySelector(domstrings.expense_lable).textContent = formarDigits(obj.expLable, '-');
             document.querySelector(domstrings.percentage).textContent = obj.percentage;
         },
-        
-        
+        displayPercentages: (percentage)=>{
+            let listPerc = document.querySelectorAll(domstrings.item_perce);
+            const nodeListForEach = (list, callback) => {
+                for(let i =0; i < list.length; i++){
+                    callback(list[i], i);
+                }
+            }
+            nodeListForEach(listPerc, (current, index)=>{
+                current.textContent = percentage[index] + '%'; 
+            });
+
+        }
     }
 })();
 const controller = ((budgetCtrl, uiCtrl) => {
@@ -201,6 +211,7 @@ const controller = ((budgetCtrl, uiCtrl) => {
         // 3. Display at the UI
 
         console.log(perc + ' e');
+        uiCtrl.displayPercentages(perc);
 
     };
   
